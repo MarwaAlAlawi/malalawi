@@ -175,6 +175,23 @@
                     </ul>
                 
                 <button id="toggleBtn">Show past</button>
+                
+                
+<style>
+  #toggleBtn {
+    display: block;        /* makes it take full width, so margin auto works */
+    margin: 10px auto;     /* top/bottom = 10px, left/right = auto → centers */
+    padding: 8px 16px;     /* spacing inside */
+    border: 1px solid #ccc;
+    border-radius: 8px;    /* rounded corners */
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
+
+  #toggleBtn:hover {
+    background-color: #e0e0e0;
+  }
+</style>
 
 <script>
   const items = document.querySelectorAll("#myList li");
