@@ -75,11 +75,90 @@
                 <section class="py-5 bg-light" id="News">
             <div class="container px-4 px-lg-5 mt-5">
                 <h2 class="fw-bolder mb-4">Updates</h2> 
-                    <ul> 
+                    <ul id="myList"> 
+                        
+        
+                        
+                        
+                                                                           <li> <img class="new" src="assets/new-post.gif" alt="..." />
+                              <b> August 2025</b> My paper, "Meta-antenna:Frequency-Reconfigurable Meta-material Antenna" has been accpeted 
+                                                                               to #UIST2025 (Busan, South Korea!) and featured as a spotlight 
+                                                                               piece in MIT News!
+                                                                    (<a href="https://news.mit.edu/2025/shape-changing-antenna-more-versatile-sensing-and-communication-0818">Article</a>)
+                        </li>  
+                  
+         
+                                                                                                   <li> 
+                              <b> July 2025</b> I taught a STEAM Workshop in Japanese at Kesennuma City with the 
+                                     MIT Japan Program
+                        </li>  
+                                
+                        
+                                                                                                   <li> 
+                              <b> June 2025</b> I have started my internship as a visiting research student at the Univerity 
+                                 of Tokyo with Professor Yasuaki Kakehi
+                        </li>  
+                                                                <li> 
+                              <b> June 2025</b> My comic book "Research, Reflections, and Rants" is printed and out! 
+                                                                    (<a href="https://www.malalawi.info/comic/index.html">Online Verison</a>)
+                        </li>  
+                  
+                                        <li> 
+                              <b> April 2025</b> I participated in #CHI2025 (Yokohama, Japan) Doctoral Consortium 
+                                            and presented my PhD work on "Hybrid Functional identities of 
+                                            Mechanical Elements" <a href="https://dl.acm.org/doi/abs/10.1145/3706599.3707635"> (Paper) </a>!
+                        </li>  
+                                                
+                                 <li> 
+                              <b> March 2025</b> I earned first place (beginner track) in the New England's 6th Annual Korean Speech
+                        Competition  organized by the Korean Consulate 
+                        </li>
+                        
+                        
+                                                         <li> 
+                              <b> January 2025</b> I am interviewed by Bahrain National Television on my class Actuated Xperiences (<a href="https://youtu.be/4-J_gvxnIa0?si=nld2iKb23cH1_fvr">Interview</a>).
+                        </li>
+                        
+                                                 <li> 
+                              <b> December 2025</b> I designed and developed an HCI & Fabrication class (Actuated Xperiences) with 
+                                                     Yunyi Zhu for MIT Bahrain GTL & the American 
+                                                     University of Bahrain (<a href="https://mit-gtl-bahrain-2025.github.io/">Class Website</a>).
+                        </li>
+                        
+                                                                          <li> 
+                              <b> October 2025</b> We launch "Interwoven" exhibition at the Weisner Gallery at MIT 
+                                                                              <a href="https://arts.mit.edu/climate-change-art/"> (Article)
+                                                                              
+                                                                              </a>
+                        </li>
+                        
+                         <li> 
+                              <b> September 2025</b> I have started learning Korean & Chinese
+                        </li>
+                        
+                                                                         <li> 
+                              <b> March 2025</b> I am the recepient of the MIT Chancellor's Innovation Fund to work 
+                                                                             on an MIT Grad Student Comic Book
+                        </li>
+                        
+                                    
+                                                                         <li> 
+                              <b> October 2024</b> Along with Sara Wilson & Supreetha Krishnan, we recieve the MIT Council of the Arts 
+                                                                             Fund to work on our first interactive exhibition, Interwoven!
+                        </li>
+                                                 <li> 
+                              <b> October 2024</b> "Speed Modulated Ironing" is a BEST Demo Nominee (People's Choice) 🏅
+                        </li>
+                        
+                         <li> 
+                              <b> September 2024</b> "Speed Modulated Ironing", a joint publication with TU Delft has been accepted
+                             to #UIST2025 (Pittsburgh, USA)
+                        </li>
+                        
                         
                         
                                   <li> 
-                             <img class="new" src="assets/new-post.gif" alt="..." /> <b> August 2024</b> I taught a STEM Workshop in Japanese in Kesennuma City with MIT Japan!  
+                              <b> August 2024</b> I taught a STEM Workshop in Japanese at Kesennuma City with MIT Japan!  
                         </li>
                                <li> 
                               <b> February 2024</b> I passed my Mechanical Engineering qualifying exams and am officially a PhD candidate!.  
@@ -94,6 +173,30 @@
                         <li> <b> October 2022</b> I will be demoing LeviCircuits at UIST 2022 & also serve as a student volunteer! </li>
    
                     </ul>
+                
+                <button id="toggleBtn">Show past</button>
+
+<script>
+  const items = document.querySelectorAll("#myList li");
+  const toggleBtn = document.getElementById("toggleBtn");
+
+  // Hide everything after the first 7
+  for (let i = 5; i < items.length; i++) {
+    items[i].style.display = "none";
+  }
+
+  let showingAll = false;
+
+  toggleBtn.addEventListener("click", () => {
+    showingAll = !showingAll;
+    for (let i = 7; i < items.length; i++) {
+      items[i].style.display = showingAll ? "list-item" : "none";
+    }
+    toggleBtn.textContent = showingAll ? "Hide past" : "Show past";
+  });
+</script>
+                
+                
              </div>
                 </section>
         
