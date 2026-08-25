@@ -15,6 +15,19 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
         <style>
+            /* ============================================================
+               PUBLICATIONS LAYOUT TOGGLE
+               Change the number below to 1 or 2 to switch the Publications
+               section (Full Papers, Extended Abstracts, Workshops) between
+               a single-column layout (formatted exactly like Exhibitions
+               & Books: image / text / links in one row, img = 25% width)
+               and a two-column layout (fixed-width image, links below
+               text). That's the only line you need to touch.
+               ============================================================ */
+            :root {
+                --pub-cols: 1; /* <-- change this to 1 for single column, 2 for double column */
+            }
+
             .compact-section { margin-top: 0; }
             .compact-section h4 { font-size: 1.15rem; margin-bottom: 1rem; }
             .compact-list { font-size: 0.9rem; line-height: 1.7; padding-left: 1.1rem; margin-bottom: 0.25rem; }
@@ -22,10 +35,65 @@
             .compact-note { font-size: 0.8rem; color: #6c757d; margin-top: 0.5rem; }
             .entry-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.1rem; }
             .entry-date { font-size: 0.8rem; color: #6c757d; font-weight: 400; }
-            .entry-sub { font-size: 0.75rem; line-height: 1.6; }
+            .entry-sub { font-size: 0.9rem; line-height: 1.6; }
+            .entry-ed { font-size: 0.8rem; line-height: 2;}
+
+
+            /* Publication grid */
+            .pub-grid {
+                display: grid;
+                grid-template-columns: repeat(var(--pub-cols), 1fr);
+                column-gap: 2rem;
+                row-gap: 1.25rem;
+                margin-bottom: 1.5rem;
+            }
+            .pub-entry { display: grid; column-gap: 1rem; row-gap: 0.5rem; }
+            .pub-entry .pub-img img { width: 100%; display: block; border-radius: 4px; }
+            .pub-entry .pub-links { display: flex; flex-wrap: wrap; gap: 0.35rem; align-content: flex-start; }
+
+            /* Single-column mode: same formatting as Exhibitions & Books
+               (image / text / links side by side, img = 25% width) */
+            body.pub-cols-1 .pub-entry {
+                grid-template-columns: 25% 50% 25%;
+                grid-template-areas: "img body links";
+                align-items: center;
+            }
+
+            /* Two-column mode: fixed-width image, links stacked under the text */
+            body.pub-cols-2 .pub-entry {
+                grid-template-columns: 200px 1fr;
+                grid-template-areas:
+                    "img body"
+                    "img links";
+                align-items: start;
+            }
+            body.pub-cols-2 .pub-entry .pub-img { width: 200px; }
+
+            .pub-entry .pub-img { grid-area: img; }
+            .pub-entry .pub-body { grid-area: body; }
+            .pub-entry .pub-links { grid-area: links; }
+
+            @media (max-width: 991.98px) {
+                .pub-grid { grid-template-columns: 1fr; } /* always single column on tablet/mobile, regardless of --pub-cols */
+                body.pub-cols-1 .pub-entry,
+                body.pub-cols-2 .pub-entry {
+                    grid-template-columns: 1fr !important;
+                    grid-template-areas: "img" "body" "links" !important;
+                }
+                body.pub-cols-2 .pub-entry .pub-img { width: 100%; max-width: 260px; }
+            }
         </style>
     </head>
     <body>
+        <script>
+            // Reads the --pub-cols value set above and applies the matching
+            // layout class to <body>. This is what lets a single CSS variable
+            // switch the Publications section between the two layouts.
+            (function () {
+                var val = getComputedStyle(document.documentElement).getPropertyValue('--pub-cols').trim();
+                document.body.classList.add('pub-cols-' + (val === '1' ? '1' : '2'));
+            })();
+        </script>
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">
@@ -33,14 +101,19 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#about">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#News">Updates</a></li>
+                                      <li class="nav-item"><a class="nav-link active" aria-current="page" href="#about">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="#publication">Publications</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#teaching">Teaching</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#work">Work</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#project">Projects</a></li>
-                        <li class="nav-item"><a class="nav-link" href="comic/index.html">Grad Student Comic</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#portfolio">Projects</a></li>
 
+                        <li class="nav-item"><a class="nav-link" href="#press">Press</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#employment">Work</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#service">Service</a></li>
+
+                        <li class="nav-item"><a class="nav-link" href="#teaching">Teaching</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#awards">Awards</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#talks">Talks</a></li>
+
+                     
                     </ul>
                     <div class="d-flex">
                         <a class="btn btn-outline-dark" href= "assets/Files/MarwaCV-research.pdf" style="text-decoration: none"> Curriculum Vitae 
@@ -80,9 +153,9 @@
  
                              <li class="mb-2"><span class="fw-bold">Aug 2026:</span> I am an Associate Chair (AC) for ACM TEI 2026, where I review and evaluate research on interactive systems and tools.</li>
 
-                            <li class="mb-2"><span class="fw-bold">Aug 2026:</span>I am co-organizing "The AI-Augmented Maker" workshop at UIST'26 <a href="https://ai-augmented-making.github.io/Workshop/">Website</a></li>
+                            <li class="mb-2"><span class="fw-bold">Aug 2026:</span> I am co-organizing "The AI-Augmented Maker" workshop at ACM UIST'26 <a href="https://ai-augmented-making.github.io/Workshop/">Website</a></li>
 
-                            <li class="mb-2"><span class="fw-bold">Aug 2026:</span> My papers, "Bifur-circuit" and "SensorGen" are accepted to UIST'26 (see you in Michigan!).</li>
+                            <li class="mb-2"><span class="fw-bold">Aug 2026:</span> My papers, "Bifur-circuit" and "SensorGen" are accepted to ACM UIST'26.</li>
                             <li class="mb-2"><span class="fw-bold">July 2026:</span> Third year teaching a Japanese-language STEAM workshop in Kesennuma with MIT Japan.</li>
                             <li class="mb-2"><span class="fw-bold">May 2026:</span>🏅I am the reciepient of the MIT Wunsch Foundation Silent Hoist and Crane Award for Outstanding Graduate Research.</li>
                             <li class="mb-2"><span class="fw-bold">March 2026:</span> Invited by MIT Center for International Studies and MIT Japan as guest speaker for "Beyond 3.11: Tohoku Moving Forward”,
@@ -91,12 +164,12 @@
                             <li class="mb-2"><span class="fw-bold">Feb 2026:</span> Arduino writes a <a href="https://blog.arduino.cc/2025/10/27/morphing-meta-antennas-enable-frequency-manipulation/">blog-post </a>about my work, "Meta-antenna".</li>
                             <li class="mb-2"><span class="fw-bold">Feb 2026:</span> I will be serving as the ACM Symposium on Computational Fabrication (SCF) Student Volunteer 
                             Co-chair.</li>
-                            <li class="mb-2"><span class="fw-bold">Nov 2025:</span> 🏅 "Ori-TENG" receives Jury Honorable Mention at UIST'25</li>
+                            <li class="mb-2"><span class="fw-bold">Nov 2025:</span> 🏅 "Ori-TENG" receives Jury Honorable Mention at ACM UIST'25</li>
                             <li class="mb-2"><span class="fw-bold">Oct 2025:</span> I was invited by the Korean Consulate General in Boston as a guest speaker to share
                             my journey on learning Korean.</li>
-                            <li class="mb-2"><span class="fw-bold">Aug 2025:</span> "Ori-TENG" is accepted to UIST'25 (See you in Busan!)</li>
-                             <li class="mb-2"><span class="fw-bold">Aug 2025:</span> My paper, "Meta-antenna" is accepted to UIST'25 and is an MIT News spotlight piece (See you in Busan!) <a href="https://news.mit.edu/2025/shape-changing-antenna-more-versatile-sensing-and-communication-0818">Article</a></li>
-                            <li class="mb-2"><span class="fw-bold">Aug 2025:</span> My paper, "Meta-antenna" is accepted to UIST'25 and is an MIT News spotlight piece! <a href="https://news.mit.edu/2025/shape-changing-antenna-more-versatile-sensing-and-communication-0818">Article</a></li>
+                            <li class="mb-2"><span class="fw-bold">Aug 2025:</span> "Ori-TENG" is accepted to ACM UIST'25 (See you in Busan!)</li>
+                             <li class="mb-2"><span class="fw-bold">Aug 2025:</span> My paper, "Meta-antenna" is accepted to ACM UIST'25 and is an MIT News spotlight piece (See you in Busan!) <a href="https://news.mit.edu/2025/shape-changing-antenna-more-versatile-sensing-and-communication-0818">Article</a></li>
+                            <li class="mb-2"><span class="fw-bold">Aug 2025:</span> My paper, "Meta-antenna" is accepted to ACM UIST'25 and is an MIT News spotlight piece! <a href="https://news.mit.edu/2025/shape-changing-antenna-more-versatile-sensing-and-communication-0818">Article</a></li>
                             <li class="mb-2"><span class="fw-bold">Jul 2025:</span> Second year teaching a Japanese-language STEAM workshop in Kesennuma with MIT Japan.</li>
                             <li class="mb-2"><span class="fw-bold">Jun 2025:</span> I am a visiting researcher at U. Tokyo with <a href="https://xlab.iii.u-tokyo.ac.jp/projects/">Prof. Yasuaki Kakehi</a>.</li>
                             <li class="mb-2"><span class="fw-bold">Jun 2025:</span> My Comic book "Research, Reflections, and Rants" is published with MIT Mind Hand Heart. <a href="https://www.malalawi.info/comic/index.html">Read</a></li>
@@ -142,29 +215,35 @@
         <!-- Education -->
         <section class="compact-section py-3" id="education">
             <div class="container px-4 px-lg-5">
-                <div class="row g-0" style="background:#f1f1f1; border-radius:7px; overflow:hidden;">
-                    <div class="col-auto d-flex align-items-center justify-content-center" style="background:#212529; padding: 0.75rem 0.4rem;">
-                        <span style="writing-mode: vertical-rl; transform: rotate(180deg); color:#fff; letter-spacing:0.1em; font-size:0.9rem; font-weight:600;">EDUCATION</span>
-                    </div>
-                    <div class="col">
-                        <div class="row text-center g-0 py-3 px-3">
-                            <div class="col-md-4">
-                                <div style="font-size:1.35rem; font-weight:700; color:#d9d9d9; line-height:1;">2020</div>
-                                <p class="entry-sub mb-0 mt-1"><b>Massachusetts Institute of Technology <br> (MIT)</b></p>
-                                <p class="entry-sub mb-0">B.Sc. in Mechanical Engineering</p>
+                <div class="row">
+                    <div class="col-md-3 d-none d-md-block"></div>
+                    <div class="col-md-6">
+                        <div class="row g-0" style="background:#f1f1f1; border-radius:7px; overflow:hidden;">
+                            <div class="col-auto d-flex align-items-center justify-content-center" style="background:#212529; padding: 0.75rem 0.4rem;">
+                                <span style="writing-mode: vertical-rl; transform: rotate(180deg); color:#fff; letter-spacing:0.1em; font-size:0.9rem; font-weight:600;">EDUCATION</span>
                             </div>
-                            <div class="col-md-4">
-                                <div style="font-size:1.35rem; font-weight:700; color:#d9d9d9; line-height:1;">2023</div>
-                                <p class="entry-sub mb-0 mt-1"><b>Massachusetts Institute of Technology <br>(MIT)</b></p>
-                                <p class="entry-sub mb-0">M.Sc. in Mechanical Engineering</p>
-                            </div>
-                            <div class="col-md-4">
-                                <div style="font-size:1.35rem; font-weight:700; color:#d9d9d9; line-height:1;">Present</div>
-                                <p class="entry-sub mb-0 mt-1"><b>Massachusetts Institute of Technology <br> (MIT)</b></p>
-                                <p class="entry-sub mb-0">Ph.D. in Mechanical Engineering</p>
+                            <div class="col">
+                                <div class="row text-center g-0 py-3 px-2">
+                                    <div class="col-4">
+                                        <div style="font-size:1.35rem; font-weight:700; color:#d9d9d9; line-height:1;">2020</div>
+                                        <p class="entry-ed mb-0 mt-1"><b>Massachusetts Institute of Technology (MIT)</b></p>
+                                        <p class="entry-ed mb-0">B.Sc. in Mechanical Engineering</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <div style="font-size:1.35rem; font-weight:700; color:#d9d9d9; line-height:1;">2023</div>
+                                        <p class="entry-ed mb-0 mt-1"><b>Massachusetts Institute of Technology (MIT)</b></p>
+                                        <p class="entry-ed mb-0">M.Sc. in Mechanical Engineering</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <div style="font-size:1.35rem; font-weight:700; color:#d9d9d9; line-height:1;">Present</div>
+                                        <p class="entry-ed mb-0 mt-1"><b>Massachusetts Institute of Technology (MIT)</b></p>
+                                        <p class="entry-ed mb-0">Ph.D. in Mechanical Engineering</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-3 d-none d-md-block"></div>
                 </div>
             </div>
         </section>
@@ -192,188 +271,161 @@ My research is published in the premiere, most
 
     <p class="entry-sub fw-bold mb-2">Full Paper Publications</p>
 
-    <!-- Bifur-circuits -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-3">
-        <img src="assets/bifur.gif" alt="Bifur-circuits" width="100%" style="border-radius:4px;"/>
-      </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Regina Zheng, Abdullah Negm, Jiaji Li, Emma Li, Yasuaki Kakehi, Yoshihiro Kawahara, Junyi Zhu, Ticha Sethapakdi &amp; Stefanie Mueller. "Bifur-circuits: Interactive and Modular Metamaterial Building Blocks via Bifurcated Geometries." <i>UIST 2026</i> (to appear).</p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="">DOI</a>
-
-        <a class="btn btn-outline-dark btn-sm" href="https://hcie.csail.mit.edu/research/Bifur-circuit/bifur-circuits.html">Project</a>
-              <a class="btn btn-outline-dark btn-sm" href="https://www.youtube.com/watch?v=eCUYbfXCvME">Video</a>
-           <a class="btn btn-outline-dark btn-sm" href="">MIT News</a>
-
+    <div class="pub-grid">
+      <!-- Bifur-circuits -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/bifur.gif" alt="Bifur-circuits"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Regina Zheng, Abdullah Negm, Jiaji Li, Emma Li, Yasuaki Kakehi, Yoshihiro Kawahara, Junyi Zhu, Ticha Sethapakdi &amp; Stefanie Mueller. "Bifur-circuits: Interactive and Modular Metamaterial Building Blocks via Bifurcated Geometries." <i>UIST 2026</i> (to appear).</p>
         </div>
-    </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="">DOI</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://hcie.csail.mit.edu/research/Bifur-circuit/bifur-circuits.html">Project</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://www.youtube.com/watch?v=eCUYbfXCvME">Video</a>
+            <a class="btn btn-outline-dark btn-sm" href="">MIT News</a>
+          </div>
+      </div>
 
-    <!-- Meta-antenna -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-3">
-        <img src="assets/metantenna.gif" alt="Meta-antenna" width="100%" style="border-radius:4px;"/>
+      <!-- Meta-antenna -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/metantenna.gif" alt="Meta-antenna"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Regina Zheng, Sooyeon Ahn, Katherine Yan, Ticha Sethapakdi, Junyi Zhu, Stefanie Mueller. "Meta-antenna: Mechanically Frequency-Reconfigurable Metamaterial Antennas." <i>UIST 2025.</i></p>
+        </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/full/10.1145/3746059.3747760">DOI</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://hcie.csail.mit.edu/research/Meta_antenna/Meta-antenna.html">Project</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://youtu.be/bmAi8Y9NSkE?si=a4FWcxXsZqn46v7R">Video</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://www.mit.edu/archive/spotlight/shape-shifting-antenna/">MIT News</a>
+          </div>
       </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Regina Zheng, Sooyeon Ahn, Katherine Yan, Ticha Sethapakdi, Junyi Zhu, Stefanie Mueller. "Meta-antenna: Mechanically Frequency-Reconfigurable Metamaterial Antennas." <i>UIST 2025.</i></p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/full/10.1145/3746059.3747760">DOI</a>
 
-        <a class="btn btn-outline-dark btn-sm" href="https://hcie.csail.mit.edu/research/Meta_antenna/Meta-antenna.html">Project</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://youtu.be/bmAi8Y9NSkE?si=a4FWcxXsZqn46v7R">Video</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://www.mit.edu/archive/spotlight/shape-shifting-antenna/">MIT News</a>
+      <!-- XpendFab -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/xpend.png" alt="XpendFab"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0">Jiaji Li, Tianshu Dong, Mingming Li, Zhiqi Wang, Xin Tang, <b>Marwa AlAlawi</b>, Stefanie Mueller. "XpendFab: 3D Printing Expendable Mechanisms for Functional Breakage, Splitting, and Disassembly." <i>Design and AI, 2025.</i></p>
+        </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="https://www.sciencedirect.com/science/article/pii/S3050741325000515">DOI</a>
+          </div>
       </div>
-    </div>
 
-    <!-- XpendFab -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-3">
-        <img src="assets/xpend.png" alt="XpendFab" width="100%" style="border-radius:4px;"/>
+      <!-- Speed-Modulated Ironing -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/SMI.gif" alt="Speed-Modulated Ironing"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0">Mehmet Ozdemir, <b>Marwa AlAlawi</b>, Mustafa Doga Dogan, Jose F. Martinez Castro, Stefanie Mueller, Zjenja Doubrovski. "Speed-Modulated Ironing: A Method for High-Resolution Shade and Texture Gradients in Single-Material 3D Printing." <i>UIST 2024.</i> [Best Demo Nominee 🏅]</p>
+        </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/10.1145/3544548.3581361">DOI</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://zjenjad.github.io/speed-modulated-ironing/">Project</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://youtu.be/PvrU1Aw2KP0?si=DsG9fP9KZjFxwdrv">Video</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://news.mit.edu/2024/new-3d-printing-technique-creates-unique-objects-using-less-waste-1010">MIT News</a>
+          </div>
       </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0">Jiaji Li, Tianshu Dong, Mingming Li, Zhiqi Wang, Xin Tang, <b>Marwa AlAlawi</b>, Stefanie Mueller. "XpendFab: 3D Printing Expendable Mechanisms for Functional Breakage, Splitting, and Disassembly." <i>Design and AI, 2025.</i></p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="https://www.sciencedirect.com/science/article/pii/S3050741325000515">DOI</a>
-      </div>
-    </div>
 
-    <!-- Speed-Modulated Ironing -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-3">
-        <img src="assets/SMI.gif" alt="Speed-Modulated Ironing" width="100%" style="border-radius:4px;"/>
-      </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0">Mehmet Ozdemir, <b>Marwa AlAlawi</b>, Mustafa Doga Dogan, Jose F. Martinez Castro, Stefanie Mueller, Zjenja Doubrovski. "Speed-Modulated Ironing: A Method for High-Resolution Shade and Texture Gradients in Single-Material 3D Printing." <i>UIST 2024.</i> [Best Demo Nominee 🏅]</p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/10.1145/3544548.3581361">DOI</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://zjenjad.github.io/speed-modulated-ironing/">Project</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://youtu.be/PvrU1Aw2KP0?si=DsG9fP9KZjFxwdrv">Video</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://news.mit.edu/2024/new-3d-printing-technique-creates-unique-objects-using-less-waste-1010">MIT News</a>
-      </div>
-    </div>
-
-    <!-- MechSense -->
-    <div class="row align-items-center mb-4">
-      <div class="col-md-3">
-        <img src="assets/mechsense.gif" alt="MechSense" width="100%" style="border-radius:4px;"/>
-      </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Noah Pacik-Nelson, Junyi Zhu, Ben Greenspan, Andrew Doan, Brandon Wong, Benjamin Owen-Block, Shanti Mickens, Wilhelm Schoeman, Michael Wessely, Andreea Danielescu, Stefanie Mueller. "MechSense: A Design and Fabrication Pipeline for Integrating Rotary Encoders into 3D Printed Mechanisms." <i>CHI 2023.</i></p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/10.1145/3544548.3581361">DOI</a>
-
-        <a class="btn btn-outline-dark btn-sm" href="https://hcie.csail.mit.edu/research/MechSense/MechSense.html">Project</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://youtu.be/8T265Jb9vLo">Video</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://news.mit.edu/2023/3d-printing-revolving-devices-sensors-0316">MIT News</a>
+      <!-- MechSense -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/mechsense.gif" alt="MechSense"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Noah Pacik-Nelson, Junyi Zhu, Ben Greenspan, Andrew Doan, Brandon Wong, Benjamin Owen-Block, Shanti Mickens, Wilhelm Schoeman, Michael Wessely, Andreea Danielescu, Stefanie Mueller. "MechSense: A Design and Fabrication Pipeline for Integrating Rotary Encoders into 3D Printed Mechanisms." <i>CHI 2023.</i></p>
+        </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/10.1145/3544548.3581361">DOI</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://hcie.csail.mit.edu/research/MechSense/MechSense.html">Project</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://youtu.be/8T265Jb9vLo">Video</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://news.mit.edu/2023/3d-printing-revolving-devices-sensors-0316">MIT News</a>
+          </div>
       </div>
     </div>
 
     <p class="entry-sub fw-bold mb-2">Extended Abstracts</p>
 
-    <!-- SensorGen -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-3">
-        <img src="assets/sensorgen.png" alt="SensorGen" width="100%" style="border-radius:4px;"/>
-      </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Faraz Faruqi, Stefanie Mueller, Ticha Sethapakdi. "SensorGen: Prompt-Driven Exploratory Design and Synthesis for Floating Capacitor Sensor Geometries." <i>UIST 2026 EA</i> (to appear).</p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="">DOI</a>
-        <a class="btn btn-outline-dark btn-sm" href="">Project</a>
-
-        
+    <div class="pub-grid">
+      <!-- SensorGen -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/sensorgen.png" alt="SensorGen"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Faraz Faruqi, Stefanie Mueller, Ticha Sethapakdi. "SensorGen: Prompt-Driven Exploratory Design and Synthesis for Floating Capacitor Sensor Geometries." <i>UIST 2026 EA</i> (to appear).</p>
         </div>
-    </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="">DOI</a>
+            <a class="btn btn-outline-dark btn-sm" href="">Project</a>
+          </div>
+      </div>
 
-    <!-- Ori-TENG -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-3">
-        <img src="assets/oriteng.gif" alt="Ori-TENG" width="100%" style="border-radius:4px;"/>
-      </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Kexin Wang, Regina Zheng, Adelene Chan, Martin Feick, Stefanie Mueller. "Ori-TENG: 3D Printed Origami Tessellations as Triboelectric Nanogenerators for Self-Powered Sensing and Energy Harvesting." <i>UIST 2025 EA.</i> [Best Poster Nominee 🏅]</p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/full/10.1145/3746058.3758435">DOI</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://hcie.csail.mit.edu/research/ori-teng/oriteng.html">Project</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://youtu.be/ziy2L5DMoX0">Video</a>
-      </div>
-    </div>
-
-    <!-- Hybrid Functional Identities -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-3">
-        <img src="assets/hybrid-fun.png" alt="Hybrid Functional Identities" width="100%" style="border-radius:4px;"/>
-      </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>. "Hybrid Functional Identities for Mechanical Elements." <i>CHI 2025 EA, Doctoral Consortium.</i></p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/abs/10.1145/3706599.3707635">DOI</a>
-      </div>
-    </div>
-
-    <!-- AcceloPrint -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-3">
-        <img src="assets/acceloprint.gif" alt="AcceloPrint" width="100%" style="border-radius:4px;"/>
-      </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0">Doga Ozbek, <b>Marwa AlAlawi</b>, Michael Wessely. "AcceloPrint: Fabricating Customizable Accelerometers with Multi-Material 3D Printing." <i>CHI 2025 EA.</i></p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/abs/10.1145/3706599.3720059">DOI</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://www.youtube.com/watch?v=ivu4SB0v0Ms">Video</a>
-
-        
+      <!-- Ori-TENG -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/oriteng.gif" alt="Ori-TENG"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Kexin Wang, Regina Zheng, Adelene Chan, Martin Feick, Stefanie Mueller. "Ori-TENG: 3D Printed Origami Tessellations as Triboelectric Nanogenerators for Self-Powered Sensing and Energy Harvesting." <i>UIST 2025 EA.</i> [Best Poster Nominee 🏅]</p>
         </div>
-    </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/full/10.1145/3746058.3758435">DOI</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://hcie.csail.mit.edu/research/ori-teng/oriteng.html">Project</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://youtu.be/ziy2L5DMoX0">Video</a>
+          </div>
+      </div>
 
-    <!-- Demonstration of AcceloPrint -->
-    <div class="row align-items-center mb-3">
-      <div class="col-md-3">
-        <img src="assets/demo-acceloprint.png" alt="Demonstration of AcceloPrint" width="100%" style="border-radius:4px;"/>
+      <!-- Hybrid Functional Identities -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/hybrid-fun.png" alt="Hybrid Functional Identities"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>. "Hybrid Functional Identities for Mechanical Elements." <i>CHI 2025 EA, Doctoral Consortium.</i></p>
+        </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/abs/10.1145/3706599.3707635">DOI</a>
+          </div>
       </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0">Doga Ozbek, <b>Marwa AlAlawi</b>, Till Max Eckroth, Michael Wessely. "Demonstration of AcceloPrint: Fabricating Accelerometers with Multi-Material 3D Printing." <i>SCF 2024 EA.</i></p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/abs/10.1145/3665662.3673256">DOI</a>
-      </div>
-    </div>
 
-    <!-- LeviCircuits -->
-    <div class="row align-items-center mb-4">
-      <div class="col-md-3">
-        <img src="assets/levicircuit.gif" alt="LeviCircuits" width="100%" style="border-radius:4px;"/>
+      <!-- AcceloPrint -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/acceloprint.gif" alt="AcceloPrint"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0">Doga Ozbek, <b>Marwa AlAlawi</b>, Michael Wessely. "AcceloPrint: Fabricating Customizable Accelerometers with Multi-Material 3D Printing." <i>CHI 2025 EA.</i></p>
+        </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/abs/10.1145/3706599.3720059">DOI</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://www.youtube.com/watch?v=ivu4SB0v0Ms">Video</a>
+          </div>
       </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Brandon Wong. "LeviCircuits: Ad-Hoc Electrical Circuit Prototyping using Ultrasound Levitation." <i>UIST 2022 EA, Student Innovation Contest.</i></p>
+
+      <!-- Demonstration of AcceloPrint -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/demo-acceloprint.png" alt="Demonstration of AcceloPrint"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0">Doga Ozbek, <b>Marwa AlAlawi</b>, Till Max Eckroth, Michael Wessely. "Demonstration of AcceloPrint: Fabricating Accelerometers with Multi-Material 3D Printing." <i>SCF 2024 EA.</i></p>
+        </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="https://dl.acm.org/doi/abs/10.1145/3665662.3673256">DOI</a>
+          </div>
       </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="https://doi.org/10.1145/3526114.3561352">DOI</a>
-        <a class="btn btn-outline-dark btn-sm" href="https://youtu.be/Hz7zYXZ_i4s">Video</a>
+
+      <!-- LeviCircuits -->
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/levicircuit.gif" alt="LeviCircuits"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Brandon Wong. "LeviCircuits: Ad-Hoc Electrical Circuit Prototyping using Ultrasound Levitation." <i>UIST 2022 EA, Student Innovation Contest.</i></p>
+        </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="https://doi.org/10.1145/3526114.3561352">DOI</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://youtu.be/Hz7zYXZ_i4s">Video</a>
+          </div>
       </div>
     </div>
 
     <p class="entry-sub fw-bold mb-2">Workshops (as organizer)</p>
-    <div class="row align-items-center">
-      <div class="col-md-3">
-        <img src="assets/Workshop_Poster.png" alt="The AI-Augmented Maker" width="100%" style="border-radius:4px;"/>
-      </div>
-      <div class="col-md-6">
-        <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Ticha Sethapakdi, Dishita Turakhia, Katherine Song, Ilan Moyer, Liang He, Lvmin Zhang, Ruofei Du, Stefanie Mueller. "The AI-Augmented Maker: Challenges and Opportunities in Designing Intelligence for Community-Driven DIY Cultures." <i>UIST 2026 Workshops</i> (to appear).</p>
-      </div>
-      <div class="col-md-3">
-        <a class="btn btn-outline-dark btn-sm" href="">DOI</a>
-
-        <a class="btn btn-outline-dark btn-sm" href="https://ai-augmented-making.github.io/Workshop/">Website</a>
+    <div class="pub-grid">
+      <div class="pub-entry">
+        <div class="pub-img"><img src="assets/Workshop_Poster.png" alt="The AI-Augmented Maker"/></div>
+        <div class="pub-body">
+          <p class="entry-sub mb-0"><b>Marwa AlAlawi</b>, Ticha Sethapakdi, Dishita Turakhia, Katherine Song, Ilan Moyer, Liang He, Lvmin Zhang, Ruofei Du, Stefanie Mueller. "The AI-Augmented Maker: Challenges and Opportunities in Designing Intelligence for Community-Driven DIY Cultures." <i>UIST 2026 Workshops</i> (to appear).</p>
+        </div>
+        <div class="pub-links">
+            <a class="btn btn-outline-dark btn-sm" href="">DOI</a>
+            <a class="btn btn-outline-dark btn-sm" href="https://ai-augmented-making.github.io/Workshop/">Website</a>
+          </div>
       </div>
     </div>
 
@@ -480,7 +532,13 @@ My research is published in the premiere, most
                                         <li><b>3DPrinting.com</b>, "MIT Develops 3D Printed Sensors that Sense Rotation" <span class="entry-date">(2023)</span></li>
                                         <li><b>MIT News</b>, "3D-Printed Revolving Devices can Sense How They are Moving" <span class="entry-date">(2023)</span></li>
                                         <li><b>Hackster.io</b>, "MIT Engineers Use Ultrasound Levitation to Prototype Circuits" <span class="entry-date">(2022)</span></li>
+                                    
+                                   <img src="assets/press.png" alt="bahraintv" width="75%" style="border-radius:4px;"/>
+
+                                    
                                     </ul>
+                                    
+
                                 </div>
                             </div>
                         </div>
@@ -528,6 +586,10 @@ My research is published in the premiere, most
                                     <p class="entry-sub fw-bold mb-2">Student Volunteer</p>
                                     <ul class="compact-list">
                                         <li>ACM UIST <span class="entry-date">(2022)</span></li>
+                                    
+                                <img src="assets/profservice.jpeg" alt="bahraintv" width="75%" style="border-radius:4px;"/>
+
+                                    
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
@@ -579,6 +641,9 @@ My research is published in the premiere, most
                                     <ul class="compact-list">
                                         <li><span class="entry-title">MIT Makerworkshop</span> &mdash; Student Machine Shop Mentor <span class="entry-date">(2019&ndash;2022)</span></li>
                                         <li><span class="entry-title">MIT Makerlodge</span> &mdash; Student Machine Shop Mentor <span class="entry-date">(2017&ndash;2018)</span></li>
+                                        <img src="assets/teaching.png" alt="bahraintv" width="75%" style="border-radius:4px;"/>
+
+                                    
                                     </ul>
                                 </div>
                             </div>
@@ -595,6 +660,10 @@ My research is published in the premiere, most
                                     <p class="entry-sub fw-bold mb-2">Masters Students (MEng)</p>
                                     <ul class="compact-list">
                                         <li>Abdullah Negm <span class="entry-date">(2025&ndash;2026)</span></li>
+                                   
+                                   <img src="assets/awards-urop.jpeg" alt="bahraintv" width="75%" style="border-radius:4px;"/>
+
+                                    
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
@@ -636,6 +705,8 @@ My research is published in the premiere, most
                                         <li><span class="entry-title">ACM UIST Best Poster Nominee (Jury Choice)</span>, Korea <span class="entry-date">(2025)</span></li>
                                         <li><span class="entry-title">ACM CHI Doctoral Consortium</span>, Japan <span class="entry-date">(2025)</span> &mdash; highly selective venue for 21 PhD students in HCI.</li>
                                         <li><span class="entry-title">ACM UIST Best Demo Nominee (People's Choice)</span>, USA <span class="entry-date">(2024)</span></li>
+
+                                    
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
@@ -645,6 +716,10 @@ My research is published in the premiere, most
                                         <li><span class="entry-title">MIT Mind Hand Heart Grant Recipient</span> <span class="entry-date">(2024)</span> &mdash; for "Research, Reflections and Rants: A Comic Book About MIT Graduate Student Experiences."</li>
                                         <li><span class="entry-title">MIT Arts Grant Recipient</span> <span class="entry-date">(2024)</span> &mdash; to build the month-long exhibition <i>Interwoven</i> at the MIT Wiesner Gallery and MIT Museum.</li>
                                         <li><span class="entry-title">1st Place, 6th Annual New England Korean Speech Competition, MA</span> <span class="entry-date">(2025)</span> &mdash; hosted by the Consulate General of the Republic of Korea in Boston.</li>
+                                  
+                                                                        <img src="assets/awards.png" alt="bahraintv" width="75%" style="border-radius:4px;"/>
+
+                                    
                                     </ul>
                                 </div>
                             </div>
@@ -665,6 +740,9 @@ My research is published in the premiere, most
                                         <li>American University of Bahrain, hosted by Bradley J. Cook &mdash; "Novel Material Technologies" <span class="entry-date">(2023, 2024)</span></li>
                                         <li>MIT Nano, hosted by Brian Anthony &mdash; "Design of a Virtual Environment for Physiological and Subjective Monitoring of User Presence in VR" <span class="entry-date">(2020)</span></li>
                                         <li>University of Bahrain, coordinated by Shatha Ahmad &mdash; "Using OCR to Build a Physical Japanese Text Translator" <span class="entry-date">(2019)</span></li>
+                               <img src="assets/presentations2.jpeg" alt="bahraintv" width="75%" style="border-radius:4px;"/>
+
+                                    
                                     </ul>
                                 </div>
                                 <div class="col-md-6">
