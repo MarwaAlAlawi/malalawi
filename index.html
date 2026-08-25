@@ -6,7 +6,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
         
         <title>Marwa AlAlawi</title>
         <!-- Favicon-->
@@ -434,9 +433,12 @@ My research is published in the premiere, most
         <h2 class="fw-bolder mb-4">Design Portfolio</h2>
 
         <div class="d-flex justify-content-center">
-          <div id="flipbook-wrapper" style="position:relative; width:100%; max-width:900px;">
+          <div id="flipbook-wrapper" style="position:relative; width:100%; max-width:1200px;">
 
-            <div id="flipbook" class="shadow rounded"></div>
+            <div id="flipbook-stage" class="shadow rounded border overflow-hidden">
+              <div id="flip-front" class="flip-page"></div>
+              <div id="flip-back" class="flip-page"></div>
+            </div>
 
             <button id="prev-page" class="flip-arrow flip-arrow-left" aria-label="Previous page">&#10094;</button>
             <button id="next-page" class="flip-arrow flip-arrow-right" aria-label="Next page">&#10095;</button>
@@ -1084,8 +1086,8 @@ updateGallery();
         
         <script>
 (function () {
-    const flipbookEl = document.getElementById('flipbook');
-    if (!flipbookEl) return; // portfolio section not on this page
+    const stage = document.getElementById('flipbook-stage');
+    if (!stage) return; // portfolio section not on this page
 
     // Page count and file naming
     const PAGE_COUNT = 21;
@@ -1093,13 +1095,15 @@ updateGallery();
     const IMAGE_PREFIX = 'MarwaPortfolio2026_Page_';
     const IMAGE_EXT = '.png';
 
-    // Build zero-padded image paths: MarwaPortfolio2026_Page_01.jpg ... _21.jpg
+    // Build zero-padded image paths: MarwaPortfolio2026_Page_01.png ... _21.png
     const pageImages = [];
     for (let i = 1; i <= PAGE_COUNT; i++) {
         const num = String(i).padStart(2, '0');
         pageImages.push(IMAGE_FOLDER + '/' + IMAGE_PREFIX + num + IMAGE_EXT);
     }
 
+    const front = document.getElementById('flip-front');
+    const back = document.getElementById('flip-back');
     const prevBtn = document.getElementById('prev-page');
     const nextBtn = document.getElementById('next-page');
     const pageNumEl = document.getElementById('page-num');
@@ -1107,42 +1111,58 @@ updateGallery();
 
     pageCountEl.textContent = PAGE_COUNT;
 
-    const pageFlip = new St.PageFlip(flipbookEl, {
-        width: 550,
-        height: 733,
-        size: 'stretch',
-        minWidth: 280,
-        maxWidth: 1000,
-        minHeight: 373,
-        maxHeight: 1333,
-        maxShadowOpacity: 0.5,
-        showCover: false,
-        mobileScrollSupport: false,
-        usePortrait: true
-    });
+    // CHANGED: Start state set to page 2
+    let currentPage = 2; 
+    let isFlipping = false;
 
-    pageFlip.loadFromImages(pageImages);
+    function showPage(num, direction) {
+        if (isFlipping || num < 1 || num > PAGE_COUNT) return;
+        isFlipping = true;
 
-    function updateButtons() {
-        const current = pageFlip.getCurrentPageIndex();
-        pageNumEl.textContent = current + 1;
-        prevBtn.disabled = current <= 0;
-        nextBtn.disabled = current >= PAGE_COUNT - 1;
+        back.innerHTML = '<img src="' + pageImages[num - 1] + '" alt="Portfolio page ' + num + '">';
+
+        const flipClass = direction === 'next' ? 'flipping-prev' : 'flipping-next';
+        front.classList.add(flipClass);
+
+        setTimeout(function () {
+            // Disable the CSS transition so the reset below doesn't animate
+            // backwards (which was causing the "flips then comes back" glitch)
+            front.style.transition = 'none';
+            front.classList.remove(flipClass);
+            front.innerHTML = back.innerHTML;
+
+            // Force a reflow so the transition:none is applied before we
+            // re-enable transitions for the next flip
+            void front.offsetWidth;
+            front.style.transition = '';
+
+            currentPage = num;
+            pageNumEl.textContent = currentPage;
+            updateButtons();
+            isFlipping = false;
+        }, 620);
     }
 
-    pageFlip.on('flip', updateButtons);
+    function updateButtons() {
+        prevBtn.disabled = currentPage <= 1;
+        nextBtn.disabled = currentPage >= PAGE_COUNT;
+    }
+
+    // CHANGED: Load second page (index 1) and set initial text indicator to 2
+    front.innerHTML = '<img src="' + pageImages[1] + '" alt="Portfolio page 2">';
+    pageNumEl.textContent = currentPage; 
     updateButtons();
 
     prevBtn.addEventListener('click', function () {
-        pageFlip.flipPrev();
+        if (currentPage > 1) showPage(currentPage - 1, 'prev');
     });
     nextBtn.addEventListener('click', function () {
-        pageFlip.flipNext();
+        if (currentPage < PAGE_COUNT) showPage(currentPage + 1, 'next');
     });
 
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowRight') pageFlip.flipNext();
-        if (e.key === 'ArrowLeft') pageFlip.flipPrev();
+        if (e.key === 'ArrowRight') nextBtn.click();
+        if (e.key === 'ArrowLeft') prevBtn.click();
     });
 })();
 </script>

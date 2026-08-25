@@ -11338,19 +11338,48 @@ textarea.form-control-lg {
     
     
 }
-/* --- Portfolio PDF flip viewer (StPageFlip) --- */
+/* --- Portfolio PDF flip viewer (custom single-page flip) --- */
 #flipbook-wrapper {
   padding: 0 50px;
 }
-#flipbook {
-  margin: 0 auto;
-  background: #f8f9fa;
+#flipbook-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3043 / 1936;
+  background-color: #f8f9fa;
+  perspective: 2400px;
 }
-#flipbook img {
+.flip-page {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+.flip-page img {
   max-width: 100%;
   max-height: 100%;
+  display: block;
   -webkit-user-drag: none;
   user-select: none;
+}
+#flip-front {
+  z-index: 2;
+  transform-origin: right center;
+  transition: transform 0.6s ease;
+}
+#flip-front.flipping-next {
+  transform: rotateY(-180deg);
+}
+#flip-front.flipping-prev {
+  transform-origin: left center;
+  transform: rotateY(180deg);
+}
+#flip-back {
+  z-index: 1;
 }
 .flip-arrow {
   position: absolute;
